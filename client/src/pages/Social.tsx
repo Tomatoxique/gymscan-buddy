@@ -17,19 +17,19 @@ const Social = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
+              <Dumbbell className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <h1 className="text-xl font-bold gym-text-gradient">GymBuddy</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
               <Link to="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour
               </Link>
             </Button>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
-              <Dumbbell className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <h1 className="text-xl font-bold gym-text-gradient">GymBuddy</h1>
           </div>
         </div>
       </header>

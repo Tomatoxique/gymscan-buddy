@@ -45,7 +45,7 @@ const Index = () => {
               <Link to="/auth">Connexion</Link>
             </Button>
             <Button className="gym-gradient gym-shadow" asChild>
-              <Link to="/auth">Inscription</Link>
+              <Link to="/auth?tab=register">Inscription</Link>
             </Button>
           </div>
         </div>
@@ -72,7 +72,7 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="gym-gradient gym-shadow text-lg px-8 py-6" asChild>
-              <Link to="/auth">
+              <Link to="/auth?tab=register">
                 <QrCode className="mr-2 h-5 w-5" />
                 Commencer maintenant
               </Link>
