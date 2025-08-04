@@ -35,14 +35,14 @@ const Index = () => {
             <Link to="/progression" className="text-muted-foreground hover:text-foreground transition-colors">
               Progression
             </Link>
-            <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
-              Social
+            <Link to="/timer" className="text-muted-foreground hover:text-foreground transition-colors">
+              Timer
             </Link>
             <Link to="/planner" className="text-muted-foreground hover:text-foreground transition-colors">
               Planner
             </Link>
-            <Link to="/timer" className="text-muted-foreground hover:text-foreground transition-colors">
-              Timer
+            <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
+              Social
             </Link>
             <Link to="/trophees" className="text-muted-foreground hover:text-foreground transition-colors">
               Trophées
@@ -134,14 +134,21 @@ const Index = () => {
                 icon: TrendingUp,
                 title: "Suivi progression",
                 description: "Visualise tes performances avec des graphiques détaillés",
-                color: "text-gym-success",
+                color: "text-red-500",
                 link: "/progression"
+              },
+              {
+                icon: Timer,
+                title: "Temps de repos",
+                description: "Optimise tes temps de repos avec des minuteurs intelligents",
+                color: "text-primary",
+                link: "/timer"
               },
               {
                 icon: Calendar,
                 title: "Planification",
                 description: "Crée des programmes personnalisés et organise tes séances",
-                color: "text-gym-warning",
+                color: "text-red-500",
                 link: "/planner"
               },
               {
@@ -152,17 +159,10 @@ const Index = () => {
                 link: "/social"
               },
               {
-                icon: Timer,
-                title: "Temps de repos",
-                description: "Optimise tes temps de repos avec des minuteurs intelligents",
-                color: "text-primary",
-                link: "/timer"
-              },
-              {
                 icon: Trophy,
                 title: "Récompenses",
                 description: "Gagne des points et débloquer des récompenses exclusives",
-                color: "text-gym-accent",
+                color: "text-red-500",
                 link: "/trophees"
               }
             ].map((feature, index) => (
