@@ -41,11 +41,11 @@ const Index = () => {
             <Link to="/planner" className="text-muted-foreground hover:text-foreground transition-colors">
               Planner
             </Link>
-            <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
-              Social
-            </Link>
             <Link to="/trophees" className="text-muted-foreground hover:text-foreground transition-colors">
               Trophées
+            </Link>
+            <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
+              Social
             </Link>
           </nav>
 
@@ -152,18 +152,18 @@ const Index = () => {
                 link: "/planner"
               },
               {
-                icon: Users,
-                title: "Social & Défis",
-                description: "Partage tes performances et relève des défis avec la communauté",
-                color: "text-accent",
-                link: "/social"
-              },
-              {
                 icon: Trophy,
                 title: "Récompenses",
                 description: "Gagne des points et débloquer des récompenses exclusives",
                 color: "text-red-500",
                 link: "/trophees"
+              },
+              {
+                icon: Users,
+                title: "Social & Défis",
+                description: "Partage tes performances et relève des défis avec la communauté",
+                color: "text-accent",
+                link: "/social"
               }
             ].map((feature, index) => (
               <Link key={index} to={feature.link}>
