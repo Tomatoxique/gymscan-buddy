@@ -8,6 +8,9 @@ import Auth from "./pages/Auth";
 import Scanner from "./pages/Scanner";
 import Progression from "./pages/Progression";
 import Social from "./pages/Social";
+import Planner from "./pages/Planner";
+import Timer from "./pages/Timer";
+import Trophees from "./pages/Trophees";
 import ForgotPassword from "./pages/ForgotPassword";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -26,6 +29,9 @@ const App = () => (
         <Route path="/scanner" component={Scanner} />
         <Route path="/progression" component={Progression} />
         <Route path="/social" component={Social} />
+        <Route path="/planner" component={Planner} />
+        <Route path="/timer" component={Timer} />
+        <Route path="/trophees" component={Trophees} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/terms" component={Terms} />

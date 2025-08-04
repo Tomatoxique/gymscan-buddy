@@ -38,6 +38,15 @@ const Index = () => {
             <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
               Social
             </Link>
+            <Link to="/planner" className="text-muted-foreground hover:text-foreground transition-colors">
+              Planner
+            </Link>
+            <Link to="/timer" className="text-muted-foreground hover:text-foreground transition-colors">
+              Timer
+            </Link>
+            <Link to="/trophees" className="text-muted-foreground hover:text-foreground transition-colors">
+              Trophées
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -72,7 +81,7 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="gym-gradient gym-shadow text-lg px-8 py-6" asChild>
-              <Link to="/auth?tab=register">
+              <Link to="/auth?tab=login">
                 <QrCode className="mr-2 h-5 w-5" />
                 Commencer maintenant
               </Link>
@@ -118,48 +127,56 @@ const Index = () => {
                 icon: QrCode,
                 title: "Scan QR Code",
                 description: "Scanne instantanément les machines et accède aux exercices",
-                color: "text-primary"
+                color: "text-primary",
+                link: "/scanner"
               },
               {
                 icon: TrendingUp,
                 title: "Suivi progression",
                 description: "Visualise tes performances avec des graphiques détaillés",
-                color: "text-gym-success"
+                color: "text-gym-success",
+                link: "/progression"
               },
               {
                 icon: Calendar,
                 title: "Planification",
                 description: "Crée des programmes personnalisés et organise tes séances",
-                color: "text-gym-warning"
+                color: "text-gym-warning",
+                link: "/planner"
               },
               {
                 icon: Users,
                 title: "Social & Défis",
                 description: "Partage tes performances et relève des défis avec la communauté",
-                color: "text-accent"
+                color: "text-accent",
+                link: "/social"
               },
               {
                 icon: Timer,
                 title: "Temps de repos",
                 description: "Optimise tes temps de repos avec des minuteurs intelligents",
-                color: "text-primary"
+                color: "text-primary",
+                link: "/timer"
               },
               {
                 icon: Trophy,
                 title: "Récompenses",
                 description: "Gagne des points et débloquer des récompenses exclusives",
-                color: "text-gym-accent"
+                color: "text-gym-accent",
+                link: "/trophees"
               }
             ].map((feature, index) => (
-              <Card key={index} className="gym-shadow hover:gym-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <feature.icon className={`h-12 w-12 ${feature.color} mb-4`} />
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
+              <Link key={index} to={feature.link}>
+                <Card className="gym-shadow hover:gym-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm cursor-pointer">
+                  <CardHeader>
+                    <feature.icon className={`h-12 w-12 ${feature.color} mb-4`} />
+                    <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

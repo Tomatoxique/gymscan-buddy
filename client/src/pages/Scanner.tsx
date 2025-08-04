@@ -51,13 +51,13 @@ const Scanner = () => {
 
       {/* Demo Modal */}
       {showDemo && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl gym-shadow">
-            <CardHeader className="relative">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <Card className="w-full max-w-lg gym-shadow my-8">
+            <CardHeader className="relative pb-4">
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-4 top-4"
+                className="absolute right-2 top-2 z-10"
                 onClick={() => setShowDemo(false)}
               >
                 <X className="h-4 w-4" />
@@ -108,17 +108,17 @@ const Scanner = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3">
                 <Button 
                   onClick={() => setShowDemo(false)} 
-                  className="flex-1 gym-gradient gym-shadow"
+                  className="w-full gym-gradient gym-shadow"
                 >
                   Commencer le scan
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => setShowDemo(false)}
-                  className="flex-1"
+                  className="w-full"
                 >
                   Fermer la démo
                 </Button>
