@@ -51,16 +51,19 @@ const Scanner = () => {
 
       {/* Demo Modal */}
       {showDemo && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <Card className="w-full max-w-lg gym-shadow my-8">
-            <CardHeader className="relative pb-4">
+        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 pt-16 overflow-y-auto">
+          <Card className="w-full max-w-md gym-shadow mb-8 mt-4">
+            <CardHeader className="relative pb-4 pt-8">
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-2 top-2 z-10"
-                onClick={() => setShowDemo(false)}
+                className="absolute right-3 top-3 z-10 h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 border border-muted bg-white"
+                onClick={() => {
+                  console.log("X button clicked");
+                  setShowDemo(false);
+                }}
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </Button>
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-4">
@@ -110,14 +113,20 @@ const Scanner = () => {
 
               <div className="flex flex-col gap-3">
                 <Button 
-                  onClick={() => setShowDemo(false)} 
+                  onClick={() => {
+                    console.log("Commencer le scan clicked");
+                    setShowDemo(false);
+                  }} 
                   className="w-full gym-gradient gym-shadow"
                 >
                   Commencer le scan
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowDemo(false)}
+                  onClick={() => {
+                    console.log("Fermer la démo clicked");
+                    setShowDemo(false);
+                  }}
                   className="w-full"
                 >
                   Fermer la démo
