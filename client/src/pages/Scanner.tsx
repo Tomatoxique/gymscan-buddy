@@ -67,8 +67,8 @@ const Scanner = () => {
 
       {/* Demo Modal */}
       {showDemo && (
-        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 pt-16">
-          <Card className="w-full max-w-md gym-shadow mb-8 mt-4">
+        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 pt-4 overflow-y-auto">
+          <Card className="w-full max-w-md gym-shadow my-4">
             <CardHeader className="pb-4 pt-6">
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-4">
