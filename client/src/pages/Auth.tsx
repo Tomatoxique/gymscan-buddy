@@ -10,8 +10,13 @@ import { Link, useSearch } from "wouter";
 const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
   const searchParams = new URLSearchParams(useSearch());
   const defaultTab = searchParams.get("tab") === "register" ? "register" : "login";
+
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -31,7 +36,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <Tabs defaultValue={defaultTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Connexion</TabsTrigger>
             <TabsTrigger value="register">Inscription</TabsTrigger>
@@ -104,10 +109,7 @@ const Auth = () => {
                   Pas encore de compte ?{" "}
                   <button 
                     className="text-primary hover:underline"
-                    onClick={() => {
-                      const registerTab = document.querySelector('[value="register"]') as HTMLElement;
-                      registerTab?.click();
-                    }}
+                    onClick={() => setActiveTab("register")}
                   >
                     Inscris-toi
                   </button>
@@ -244,10 +246,7 @@ const Auth = () => {
                   Déjà un compte ?{" "}
                   <button 
                     className="text-primary hover:underline"
-                    onClick={() => {
-                      const loginTab = document.querySelector('[value="login"]') as HTMLElement;
-                      loginTab?.click();
-                    }}
+                    onClick={() => setActiveTab("login")}
                   >
                     Connecte-toi
                   </button>

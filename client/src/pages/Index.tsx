@@ -77,8 +77,10 @@ const Index = () => {
                 Commencer maintenant
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-              Voir la démo
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
+              <Link to="/scanner?demo=true">
+                Voir la démo
+              </Link>
             </Button>
           </div>
 
