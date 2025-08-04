@@ -14,8 +14,24 @@ const Scanner = () => {
   useEffect(() => {
     if (searchParams.get("demo") === "true") {
       setShowDemo(true);
+      // Nettoyer l'URL sans paramètres
+      window.history.replaceState({}, '', '/scanner');
     }
   }, [searchParams]);
+  
+  // Empêcher le scroll de l'arrière-plan quand la modal est ouverte
+  useEffect(() => {
+    if (showDemo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Nettoyer à la fermeture du composant
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showDemo]);
 
   const handleStartScan = () => {
     setIsScanning(true);
@@ -51,20 +67,9 @@ const Scanner = () => {
 
       {/* Demo Modal */}
       {showDemo && (
-        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 pt-16 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 pt-16">
           <Card className="w-full max-w-md gym-shadow mb-8 mt-4">
-            <CardHeader className="relative pb-4 pt-8">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-3 top-3 z-10 h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 border border-muted bg-white"
-                onClick={() => {
-                  console.log("X button clicked");
-                  setShowDemo(false);
-                }}
-              >
-                <X className="h-5 w-5" />
-              </Button>
+            <CardHeader className="pb-4 pt-6">
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-4">
                   <Play className="h-8 w-8 text-primary-foreground" />
@@ -111,25 +116,15 @@ const Scanner = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex justify-center">
                 <Button 
                   onClick={() => {
-                    console.log("Commencer le scan clicked");
                     setShowDemo(false);
                   }} 
                   className="w-full gym-gradient gym-shadow"
+                  size="lg"
                 >
                   Commencer le scan
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    console.log("Fermer la démo clicked");
-                    setShowDemo(false);
-                  }}
-                  className="w-full"
-                >
-                  Fermer la démo
                 </Button>
               </div>
             </CardContent>
