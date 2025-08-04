@@ -13,7 +13,7 @@ import {
   Target,
   Zap
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "wouter";
 
 const Index = () => {
   return (
