@@ -1,14 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, Dumbbell, ArrowLeft, Play, X, Camera, Target, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { QrCode, Dumbbell, ArrowLeft, Play, X, Camera, Target, CheckCircle, AlertCircle } from "lucide-react";
 import { Link, useSearch } from "wouter";
 
 const Scanner = () => {
   const [showDemo, setShowDemo] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const searchParams = new URLSearchParams(useSearch());
   
   useEffect(() => {
@@ -33,13 +38,70 @@ const Scanner = () => {
     };
   }, [showDemo]);
 
+  // Demander l'autorisation d'accès à la caméra
+  const requestCameraPermission = async () => {
+    try {
+      setError(null);
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment' // Caméra arrière préférée, sinon frontale
+        } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        streamRef.current = stream;
+        setHasPermission(true);
+        setIsScanning(true);
+        
+        // Simuler la détection QR après 3 secondes
+        setTimeout(() => {
+          setScannedData("MACHINE_001_CHEST_PRESS");
+          setIsScanning(false);
+        }, 3000);
+      }
+    } catch (err: any) {
+      setError(err.message || "Impossible d'accéder à la caméra");
+      setHasPermission(false);
+    }
+  };
+
+  // Arrêter la caméra
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsScanning(false);
+    setHasPermission(null);
+    setScannedData(null);
+  };
+
+  // Nettoyer à la fermeture du composant
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
   const handleStartScan = () => {
-    setIsScanning(true);
-    // Simulation d'un scan QR code
-    setTimeout(() => {
-      setScannedData("MACHINE_001_BENCH_PRESS");
-      setIsScanning(false);
-    }, 2000);
+    if (hasPermission) {
+      // Si on a déjà la permission, recommencer le scan
+      setScannedData(null);
+      setIsScanning(true);
+      setTimeout(() => {
+        setScannedData("MACHINE_001_CHEST_PRESS");
+        setIsScanning(false);
+      }, 3000);
+    } else {
+      // Demander la permission
+      requestCameraPermission();
+    }
   };
 
   return (
@@ -81,16 +143,27 @@ const Scanner = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Video Placeholder */}
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20"></div>
-                <div className="text-center z-10">
-                  <Play className="h-16 w-16 text-primary mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Vidéo explicative</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Comment scanner efficacement les QR codes des équipements
-                  </p>
-                </div>
+              {/* Video démonstration */}
+              <div className="aspect-video bg-black rounded-lg flex items-center justify-center relative overflow-hidden">
+                <video 
+                  className="w-full h-full object-cover rounded-lg" 
+                  autoPlay 
+                  loop 
+                  muted
+                  playsInline
+                >
+                  <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                  {/* Fallback pour navigateurs ne supportant pas les vidéos */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <div className="text-center z-10">
+                      <Play className="h-16 w-16 text-primary mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Vidéo explicative</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Comment scanner efficacement les QR codes des équipements
+                      </p>
+                    </div>
+                  </div>
+                </video>
               </div>
 
               {/* Instructions */}
@@ -146,8 +219,27 @@ const Scanner = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="aspect-square bg-muted/50 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
-                <div className="text-center">
+              {/* Messages d'erreur */}
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Zone de scan */}
+              <div className="aspect-square bg-black rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center relative overflow-hidden">
+                {hasPermission && isScanning && !scannedData ? (
+                  <video 
+                    ref={videoRef}
+                    className="w-full h-full object-cover rounded-lg"
+                    autoPlay
+                    playsInline
+                    muted
+                  />
+                ) : null}
+                
+                <div className={`text-center ${hasPermission && isScanning && !scannedData ? 'absolute inset-0 bg-black/30 flex items-center justify-center' : ''}`}>
                   {scannedData ? (
                     <div className="space-y-4">
                       <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
@@ -157,13 +249,13 @@ const Scanner = () => {
                       </div>
                     </div>
                   ) : isScanning ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4 text-white">
                       <div className="animate-pulse">
-                        <Camera className="h-16 w-16 text-primary mx-auto" />
+                        <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
                       </div>
                       <div>
-                        <h3 className="font-semibold">Scan en cours...</h3>
-                        <p className="text-sm text-muted-foreground">Centre le QR code dans le cadre</p>
+                        <h3 className="font-semibold">Recherche QR code...</h3>
+                        <p className="text-sm text-gray-300">Positionnez le QR code dans le cadre</p>
                       </div>
                     </div>
                   ) : (
@@ -171,7 +263,12 @@ const Scanner = () => {
                       <QrCode className="h-16 w-16 text-muted-foreground mx-auto" />
                       <div>
                         <h3 className="font-semibold">Prêt à scanner</h3>
-                        <p className="text-sm text-muted-foreground">Appuie sur le bouton pour commencer</p>
+                        <p className="text-sm text-muted-foreground">
+                          {hasPermission === false 
+                            ? "Permission caméra refusée - Réessayez" 
+                            : "Appuie sur le bouton pour accéder à la caméra"
+                          }
+                        </p>
                       </div>
                     </div>
                   )}
@@ -190,8 +287,7 @@ const Scanner = () => {
                     className="w-full" 
                     size="lg"
                     onClick={() => {
-                      setScannedData(null);
-                      setIsScanning(false);
+                      stopCamera();
                     }}
                   >
                     Scanner un autre QR code
