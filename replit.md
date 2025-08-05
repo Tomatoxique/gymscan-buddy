@@ -6,13 +6,19 @@ A French fitness application (GymBuddy) that allows users to scan QR codes on gy
 ## Architecture
 - **Frontend**: React with Wouter for routing, TanStack Query for state management, shadcn/ui components
 - **Backend**: Express.js server with Drizzle ORM
-- **Database**: PostgreSQL (migrated from Supabase)
+- **Database**: PostgreSQL (configured for Supabase)
 - **Styling**: Tailwind CSS with custom gym-themed design tokens
 
 ## Recent Changes
+- **2025-08-05**: Supabase Integration Setup
+  - Updated database connection to use postgres-js for Supabase compatibility
+  - Configured SSL requirements for Supabase
+  - Implemented real camera access for QR scanner with live video feed
+  - Added animated demo video for scanner functionality
+  - Enhanced scanner UI with detection overlay and instructions
+
 - **2025-01-04**: Migrated from Lovable to Replit environment
   - Converted React Router to Wouter for routing
-  - Removed Supabase integration
   - Set up PostgreSQL database with Drizzle ORM
   - Created proper query client configuration
   - Fixed missing dependencies (react-router-dom, sonner)
