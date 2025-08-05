@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
   Dumbbell, 
   QrCode, 
@@ -14,8 +15,19 @@ import {
   Zap
 } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -28,34 +40,49 @@ const Index = () => {
             <h1 className="text-2xl font-bold gym-text-gradient">GymBuddy</h1>
           </div>
           
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/scanner" className="text-muted-foreground hover:text-foreground transition-colors">
-              Scanner
-            </Link>
-            <Link to="/progression" className="text-muted-foreground hover:text-foreground transition-colors">
-              Progression
-            </Link>
-            <Link to="/timer" className="text-muted-foreground hover:text-foreground transition-colors">
-              Timer
-            </Link>
-            <Link to="/planner" className="text-muted-foreground hover:text-foreground transition-colors">
-              Planner
-            </Link>
-            <Link to="/trophees" className="text-muted-foreground hover:text-foreground transition-colors">
-              Trophées
-            </Link>
-            <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
-              Social
-            </Link>
-          </nav>
+          {isAuthenticated && (
+            <nav className="hidden md:flex items-center gap-6">
+              <Link to="/scanner" className="text-muted-foreground hover:text-foreground transition-colors">
+                Scanner
+              </Link>
+              <Link to="/progression" className="text-muted-foreground hover:text-foreground transition-colors">
+                Progression
+              </Link>
+              <Link to="/timer" className="text-muted-foreground hover:text-foreground transition-colors">
+                Timer
+              </Link>
+              <Link to="/planner" className="text-muted-foreground hover:text-foreground transition-colors">
+                Planner
+              </Link>
+              <Link to="/trophees" className="text-muted-foreground hover:text-foreground transition-colors">
+                Trophées
+              </Link>
+              <Link to="/social" className="text-muted-foreground hover:text-foreground transition-colors">
+                Social
+              </Link>
+            </nav>
+          )}
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" asChild>
-              <Link to="/auth">Connexion</Link>
-            </Button>
-            <Button className="gym-gradient gym-shadow" asChild>
-              <Link to="/auth?tab=register">Inscription</Link>
-            </Button>
+            {isAuthenticated ? (
+              <Link to="/profile" className="flex items-center gap-2 hover:bg-muted/50 rounded-lg p-2 transition-colors">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                    {user?.username.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">{user?.username}</span>
+              </Link>
+            ) : (
+              <>
+                <Button variant="outline" asChild>
+                  <Link to="/auth">Connexion</Link>
+                </Button>
+                <Button className="gym-gradient gym-shadow" asChild>
+                  <Link to="/auth?tab=register">Inscription</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
