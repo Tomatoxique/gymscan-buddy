@@ -42,27 +42,50 @@ const Scanner = () => {
   const requestCameraPermission = async () => {
     try {
       setError(null);
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment' // Caméra arrière préférée, sinon frontale
-        } 
-      });
+      setIsScanning(true);
       
-      if (videoRef.current) {
+      // Essayer d'abord la caméra arrière, puis frontale
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment' // Caméra arrière préférée
+          } 
+        });
+      } catch {
+        // Si la caméra arrière échoue, utiliser la frontale
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'user'
+          } 
+        });
+      }
+      
+      if (videoRef.current && stream) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
         setHasPermission(true);
-        setIsScanning(true);
         
-        // Simuler la détection QR après 3 secondes
+        // Attendre que la vidéo soit prête avant de commencer la détection
+        videoRef.current.onloadedmetadata = () => {
+          console.log("Vidéo prête, dimension:", videoRef.current?.videoWidth, "x", videoRef.current?.videoHeight);
+        };
+        
+        // Simuler la détection QR après 4 secondes
         setTimeout(() => {
-          setScannedData("MACHINE_001_CHEST_PRESS");
-          setIsScanning(false);
-        }, 3000);
+          if (streamRef.current) {
+            setScannedData("MACHINE_001_CHEST_PRESS");
+            setIsScanning(false);
+          }
+        }, 4000);
       }
     } catch (err: any) {
-      setError(err.message || "Impossible d'accéder à la caméra");
+      console.error("Erreur caméra:", err);
+      setError(err.name === 'NotAllowedError' 
+        ? "Permission caméra refusée. Veuillez autoriser l'accès." 
+        : "Impossible d'accéder à la caméra");
       setHasPermission(false);
+      setIsScanning(false);
     }
   };
 
@@ -143,27 +166,40 @@ const Scanner = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Video démonstration */}
-              <div className="aspect-video bg-black rounded-lg flex items-center justify-center relative overflow-hidden">
-                <video 
-                  className="w-full h-full object-cover rounded-lg" 
-                  autoPlay 
-                  loop 
-                  muted
-                  playsInline
-                >
-                  <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-                  {/* Fallback pour navigateurs ne supportant pas les vidéos */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                    <div className="text-center z-10">
-                      <Play className="h-16 w-16 text-primary mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">Vidéo explicative</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Comment scanner efficacement les QR codes des équipements
-                      </p>
+              {/* Simulation vidéo démonstration avec animation */}
+              <div className="aspect-video bg-gradient-to-br from-gray-900 via-red-900/20 to-black rounded-lg flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/60"></div>
+                
+                {/* Animation de démonstration */}
+                <div className="relative z-10 flex flex-col items-center justify-center h-full text-white space-y-6">
+                  <div className="relative">
+                    {/* Icône de sportif animé */}
+                    <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-pulse">
+                      <Dumbbell className="w-10 h-10 text-white" />
+                    </div>
+                    
+                    {/* Téléphone qui se rapproche du QR code */}
+                    <div className="absolute -top-2 -right-2 w-8 h-12 bg-gray-200 rounded transform rotate-12 animate-bounce">
+                      <div className="w-full h-8 bg-black rounded-t flex items-center justify-center">
+                        <QrCode className="w-4 h-4 text-white" />
+                      </div>
                     </div>
                   </div>
-                </video>
+                  
+                  <div className="text-center max-w-xs">
+                    <h3 className="text-lg font-semibold mb-2">Démonstration Scanner</h3>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      1. Approche ton téléphone du QR code<br/>
+                      2. Centre-le dans le cadre<br/>
+                      3. Attends la détection automatique
+                    </p>
+                  </div>
+                  
+                  {/* QR Code animé */}
+                  <div className="w-16 h-16 bg-white rounded animate-pulse flex items-center justify-center">
+                    <QrCode className="w-12 h-12 text-black" />
+                  </div>
+                </div>
               </div>
 
               {/* Instructions */}
@@ -228,51 +264,70 @@ const Scanner = () => {
               )}
 
               {/* Zone de scan */}
-              <div className="aspect-square bg-black rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center relative overflow-hidden">
-                {hasPermission && isScanning && !scannedData ? (
+              <div className="aspect-square bg-black rounded-lg border-2 border-dashed border-primary/50 flex items-center justify-center relative overflow-hidden">
+                {/* Flux vidéo de la caméra */}
+                {hasPermission && isScanning && !scannedData && (
                   <video 
                     ref={videoRef}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover"
                     autoPlay
                     playsInline
                     muted
                   />
-                ) : null}
+                )}
                 
-                <div className={`text-center ${hasPermission && isScanning && !scannedData ? 'absolute inset-0 bg-black/30 flex items-center justify-center' : ''}`}>
-                  {scannedData ? (
-                    <div className="space-y-4">
-                      <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-                      <div>
-                        <h3 className="font-semibold text-green-600">Scan réussi !</h3>
-                        <p className="text-sm text-muted-foreground">Machine détectée : {scannedData}</p>
+                {/* Overlay de scan avec cadre de détection */}
+                {hasPermission && isScanning && !scannedData && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Cadre de détection QR */}
+                    <div className="w-48 h-48 border-4 border-red-500 rounded-lg relative">
+                      <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-red-500"></div>
+                      <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-red-500"></div>
+                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-red-500"></div>
+                      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-red-500"></div>
+                      
+                      {/* Ligne de scan animée */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-full h-1 bg-red-500 opacity-75 animate-pulse"></div>
                       </div>
                     </div>
-                  ) : isScanning ? (
-                    <div className="space-y-4 text-white">
-                      <div className="animate-pulse">
-                        <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Recherche QR code...</h3>
-                        <p className="text-sm text-gray-300">Positionnez le QR code dans le cadre</p>
-                      </div>
+                    
+                    {/* Instructions en overlay */}
+                    <div className="absolute bottom-4 left-4 right-4 text-center">
+                      <p className="text-white text-sm bg-black/50 rounded px-3 py-2">
+                        Centre le QR code dans le cadre rouge
+                      </p>
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <QrCode className="h-16 w-16 text-muted-foreground mx-auto" />
-                      <div>
-                        <h3 className="font-semibold">Prêt à scanner</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {hasPermission === false 
-                            ? "Permission caméra refusée - Réessayez" 
-                            : "Appuie sur le bouton pour accéder à la caméra"
-                          }
-                        </p>
+                  </div>
+                )}
+                
+                {/* États sans caméra */}
+                {(!hasPermission || !isScanning || scannedData) && (
+                  <div className="text-center">
+                    {scannedData ? (
+                      <div className="space-y-4">
+                        <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+                        <div>
+                          <h3 className="font-semibold text-green-600">Scan réussi !</h3>
+                          <p className="text-sm text-muted-foreground">Machine détectée : {scannedData}</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <QrCode className="h-16 w-16 text-muted-foreground mx-auto" />
+                        <div>
+                          <h3 className="font-semibold">Scanner QR Code</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {hasPermission === false 
+                              ? "Permission caméra refusée - Réessayez" 
+                              : "Appuie sur le bouton pour démarrer"
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {scannedData ? (
