@@ -2,6 +2,12 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// S'assurer que les variables d'environnement sont disponibles
+console.log("Environment check:");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
+console.log("REPL_ID:", process.env.REPL_ID);
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
